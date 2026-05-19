@@ -1,0 +1,33 @@
+<svg width="200" height="48" viewBox="0 0 200 48" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="GroundWave">
+  <!--
+    GROUNDWAVE — Brand Logo
+    Usage: import this file wherever the logo is needed.
+    The icon + wordmark lockup is the primary logo form.
+    Do not alter proportions, colors, or typeface.
+  -->
+
+  <!-- Icon mark (wave + accent dot) -->
+  <g>
+    <path
+      d="M4 34 Q10 14 20 24 Q30 34 40 14"
+      fill="none"
+      stroke="#f0f0f0"
+      stroke-width="3"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+    <!-- Accent dot — always #e85d3a, never changes -->
+    <circle cx="40" cy="14" r="4" fill="#e85d3a"/>
+  </g>
+
+  <!-- Wordmark: "Ground" bold + "Wave" light, accent color -->
+  <text
+    x="54"
+    y="30"
+    font-family="'Space Grotesk', 'Helvetica Neue', Arial, sans-serif"
+    font-size="24"
+    font-weight="700"
+    letter-spacing="-0.04em"
+    fill="#f0f0f0"
+  >Ground<tspan font-weight="300" fill="#e85d3a">Wave</tspan></text>
+</svg>
