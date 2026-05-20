@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Book a Call — GroundWave</title>
+<meta name="description" content="Book a free 30-minute consult with the GroundWave team. We'll audit your category visibility on Reddit + AI search."/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path d='M10 80 Q25 35 45 55 Q65 75 85 30' fill='none' stroke='%23e85d3a' stroke-width='12' stroke-linecap='round'/><circle cx='85' cy='30' r='9' fill='%23e85d3a'/></svg>"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#0a0a0a;
+  --bg2:#111111;
+  --bg3:#161616;
+  --border:#222222;
+  --border2:#2a2a2a;
+  --text:#f0f0f0;
+  --muted:#6a6a6a;
+  --muted2:#444444;
+  --accent:#e85d3a;
+  --accent2:#c44a29;
+  --logo-ink:#f0f0f0;
+  --card-bg:#111111;
+  --card-left-bg:#161616;
+  --input-bg:#1a1a1a;
+  --input-border:#2a2a2a;
+  --input-focus:#e85d3a;
+}
+[data-theme="light"]{
+  --bg:#f5f3ef;
+  --bg2:#edeae4;
+  --bg3:#e4e0d8;
+  --border:#d0ccc4;
+  --border2:#c4bfb6;
+  --text:#1a1a1a;
+  --muted:#6a6560;
+  --muted2:#9a9590;
+  --logo-ink:#1a1a1a;
+  --card-bg:#ffffff;
+  --card-left-bg:#f0ede8;
+  --input-bg:#ffffff;
+  --input-border:#d0ccc4;
+  --input-focus:#e85d3a;
+}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'Space Grotesk',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  line-height:1.6;
+}
+
+/* ── TOP BAR ── */
+.top-bar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 40px;
+  border-bottom:0.5px solid var(--border);
+}
+.back-link{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:13px;font-weight:500;letter-spacing:0.04em;
+  color:var(--muted);text-decoration:none;
+  transition:color .2s;
+}
+.back-link:hover,.back-link:focus-visible{color:var(--text);}
+.back-link svg{transition:transform .2s;}
+.back-link:hover svg{transform:translateX(-3px);}
+.theme-toggle{
+  width:36px;height:36px;border-radius:4px;
+  border:0.5px solid var(--border2);background:transparent;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  color:var(--muted);transition:color .2s,border-color .2s;
+}
+.theme-toggle:hover{color:var(--text);border-color:var(--muted2);}
+.theme-toggle:focus-visible{outline:2px solid var(--accent);outline-offset:3px;}
+.icon-sun{display:none;}
+.icon-moon{display:block;}
+[data-theme="light"] .icon-sun{display:block;}
+[data-theme="light"] .icon-moon{display:none;}
+
+/* ── PAGE WRAPPER ── */
+.page{
+  max-width:980px;margin:0 auto;
+  padding:48px 24px 80px;
+}
+
+/* ── STATUS BADGE ── */
+.status-badge{
+  display:inline-flex;align-items:center;gap:7px;
+  background:var(--card-bg);
+  border:0.5px solid var(--border);
+  border-radius:20px;padding:6px 14px;
+  font-size:12px;font-weight:500;letter-spacing:0.04em;
+  color:var(--muted);
+  margin-bottom:28px;
+}
+.status-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:#3acf6e;
+  box-shadow:0 0 0 3px rgba(58,207,110,0.2);
+}
+
+/* ── HEADLINE ── */
+.page-headline{
+  text-align:center;
+  margin-bottom:40px;
+}
+.page-headline h1{
+  font-size:clamp(32px,5vw,52px);
+  font-weight:700;
+  letter-spacing:-0.03em;
+  line-height:1.1;
+  color:var(--text);
+  margin-bottom:12px;
+}
+.page-headline h1 em{
+  font-style:normal;
+  color:var(--accent);
+}
+.page-headline p{
+  font-size:15px;font-weight:400;
+  color:var(--muted);line-height:1.7;
+  max-width:520px;margin:0 auto;
+}
+
+/* ── CARD ── */
+.booking-card{
+  background:var(--card-bg);
+  border:0.5px solid var(--border);
+  border-radius:16px;
+  display:grid;
+  grid-template-columns:1fr 1.4fr;
+  overflow:hidden;
+  box-shadow:
+    0 4px 24px rgba(0,0,0,0.18),
+    0 1px 4px rgba(0,0,0,0.12);
+}
+
+/* ── LEFT PANEL ── */
+.panel-left{
+  background:var(--card-left-bg);
+  border-right:0.5px solid var(--border);
+  padding:36px 32px;
+}
+.call-with-label{
+  font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:10px;
+}
+.call-team{
+  display:flex;align-items:center;gap:12px;
+  margin-bottom:20px;
+}
+.team-avatar{
+  width:44px;height:44px;border-radius:50%;
+  background:linear-gradient(135deg,var(--accent) 0%,var(--accent2) 100%);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+  position:relative;
+}
+.team-avatar svg{color:#fff;}
+.team-avatar-dot{
+  position:absolute;bottom:1px;right:1px;
+  width:11px;height:11px;border-radius:50%;
+  background:#3acf6e;
+  border:2px solid var(--card-left-bg);
+}
+.team-name{
+  font-size:15px;font-weight:600;
+  color:var(--text);line-height:1.3;
+}
+.call-desc{
+  font-size:13px;font-weight:400;
+  color:var(--muted);line-height:1.7;
+  margin-bottom:24px;
+}
+
+.call-meta{
+  display:flex;flex-direction:column;gap:12px;
+  margin-bottom:28px;
+  padding-bottom:28px;
+  border-bottom:0.5px solid var(--border);
+}
+.call-meta-item{
+  display:flex;align-items:center;gap:10px;
+  font-size:13px;font-weight:400;color:var(--text);
+}
+.call-meta-item svg{
+  color:var(--accent);flex-shrink:0;
+}
+
+.what-youll-get-label{
+  font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:14px;
+}
+.what-youll-get ul{
+  list-style:none;
+  display:flex;flex-direction:column;gap:10px;
+}
+.what-youll-get li{
+  display:flex;align-items:flex-start;gap:10px;
+  font-size:13px;font-weight:400;color:var(--text);
+  line-height:1.5;
+}
+.what-youll-get li svg{
+  color:var(--accent);flex-shrink:0;margin-top:2px;
+}
+
+/* ── RIGHT PANEL ── */
+.panel-right{
+  padding:36px 36px 32px;
+}
+.form-heading{
+  font-size:22px;font-weight:700;letter-spacing:-0.02em;
+  color:var(--text);margin-bottom:6px;
+}
+.form-subheading{
+  font-size:13px;color:var(--accent);font-weight:500;
+  margin-bottom:28px;
+}
+
+.form-row{
+  display:grid;grid-template-columns:1fr 1fr;gap:16px;
+  margin-bottom:16px;
+}
+.form-group{
+  display:flex;flex-direction:column;gap:6px;
+  margin-bottom:16px;
+}
+.form-group.no-margin{margin-bottom:0;}
+label{
+  font-size:12px;font-weight:600;letter-spacing:0.04em;
+  color:var(--text);
+}
+label span.req{color:var(--accent);}
+input[type="text"],input[type="email"],input[type="tel"],input[type="url"],select{
+  width:100%;
+  background:var(--input-bg);
+  border:0.5px solid var(--input-border);
+  border-radius:6px;
+  padding:11px 14px;
+  font-family:'Space Grotesk',sans-serif;
+  font-size:14px;font-weight:400;
+  color:var(--text);
+  outline:none;
+  transition:border-color .2s,box-shadow .2s;
+  -webkit-appearance:none;appearance:none;
+}
+input[type="text"]::placeholder,input[type="email"]::placeholder,
+input[type="tel"]::placeholder,input[type="url"]::placeholder{
+  color:var(--muted2);
+}
+input:focus,select:focus{
+  border-color:var(--input-focus);
+  box-shadow:0 0 0 3px rgba(232,93,58,0.12);
+}
+select{
+  cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%236a6a6a' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 14px center;
+  padding-right:36px;
+}
+[data-theme="light"] select{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%236a6560' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+select option{background:var(--bg2);}
+
+.phone-row{
+  display:flex;gap:8px;
+  align-items:stretch;
+}
+.phone-prefix{
+  display:flex;align-items:center;gap:6px;
+  background:var(--input-bg);
+  border:0.5px solid var(--input-border);
+  border-radius:6px;
+  padding:0 12px;
+  font-size:14px;font-weight:400;color:var(--muted);
+  flex-shrink:0;
+  white-space:nowrap;
+}
+.phone-prefix input[type="tel"]{
+  border:none;background:transparent;padding:0;width:100%;box-shadow:none;
+}
+.phone-input-wrap{flex:1;}
+.phone-input-wrap input{border-radius:6px;}
+
+.field-hint{
+  font-size:11px;color:var(--muted);line-height:1.5;margin-top:4px;
+}
+
+.submit-btn{
+  width:100%;
+  background:#0f0f0f;
+  color:#fff;
+  border:none;border-radius:8px;
+  padding:16px 24px;
+  font-family:'Space Grotesk',sans-serif;
+  font-size:15px;font-weight:600;letter-spacing:0.02em;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  margin-top:8px;
+  transition:background .2s,transform .15s;
+}
+[data-theme="light"] .submit-btn{background:#111111;}
+.submit-btn:hover{background:#1a1a1a;transform:translateY(-1px);}
+[data-theme="light"] .submit-btn:hover{background:#222222;}
+.submit-btn:active{transform:translateY(0);}
+.submit-btn:focus-visible{outline:2px solid var(--accent);outline-offset:3px;}
+
+.submit-note{
+  text-align:center;
+  font-size:12px;color:var(--muted);
+  margin-top:12px;line-height:1.5;
+}
+
+/* ── RESPONSIVE ── */
+@media(max-width:720px){
+  .booking-card{grid-template-columns:1fr;}
+  .panel-left{border-right:none;border-bottom:0.5px solid var(--border);}
+  .form-row{grid-template-columns:1fr;}
+  .top-bar{padding:16px 20px;}
+  .page{padding:32px 16px 60px;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<header class="top-bar">
+  <a class="back-link" href="/">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 5l-7 7 7 7"/></svg>
+    GroundWave
+  </a>
+  <button class="theme-toggle" id="theme-toggle" aria-label="Toggle light/dark mode">
+    <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+    <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+  </button>
+</header>
+
+<main class="page">
+
+  <!-- STATUS BADGE + HEADLINE -->
+  <div class="page-headline">
+    <div class="status-badge">
+      <span class="status-dot"></span>
+      Now booking new clients for Q2
+    </div>
+    <h1>Book a free <em>30-min</em> consult.</h1>
+    <p>We'll audit your category visibility on Reddit + AI search and walk you through how we'd run Reddit for your brand.</p>
+  </div>
+
+  <!-- TWO-COLUMN CARD -->
+  <div class="booking-card">
+
+    <!-- LEFT PANEL -->
+    <div class="panel-left">
+      <p class="call-with-label">Your call with</p>
+      <div class="call-team">
+        <div class="team-avatar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+          <span class="team-avatar-dot"></span>
+        </div>
+        <span class="team-name">The GroundWave team</span>
+      </div>
+      <p class="call-desc">30 minutes. No-pitch, no-pressure. We share what's working in your category and you decide if it's a fit.</p>
+
+      <div class="call-meta">
+        <div class="call-meta-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          30 minutes
+        </div>
+        <div class="call-meta-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="15" rx="2"/><polyline points="17 2 12 7 7 2"/></svg>
+          Web conferencing — link sent on confirm
+        </div>
+        <div class="call-meta-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/></svg>
+          America/Sao_Paulo
+        </div>
+      </div>
+
+      <div class="what-youll-get">
+        <p class="what-youll-get-label">What you'll get</p>
+        <ul>
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            A custom Reddit + AI ranking strategy
+          </li>
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            Live audit of your category visibility
+          </li>
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            Pricing and rollout timeline
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="panel-right">
+      <h2 class="form-heading">Tell us who you are</h2>
+      <p class="form-subheading">We'll prep your category audit before the call.</p>
+
+      <form action="#" method="post" novalidate>
+        <div class="form-row">
+          <div class="form-group no-margin">
+            <label for="full-name">Full name <span class="req">*</span></label>
+            <input type="text" id="full-name" name="full_name" placeholder="Your full name" required autocomplete="name"/>
+          </div>
+          <div class="form-group no-margin">
+            <label for="work-email">Work email <span class="req">*</span></label>
+            <input type="email" id="work-email" name="work_email" placeholder="you@company.com" required autocomplete="email"/>
+            <p class="field-hint">We verify the domain in real time — typo'd or burner addresses won't get through.</p>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Phone number <span class="req">*</span></label>
+          <input type="tel" id="phone" name="phone" placeholder="+1 (555) 000-0000" required autocomplete="tel"/>
+        </div>
+
+        <div class="form-group">
+          <label for="website">What is your website? <span class="req">*</span></label>
+          <input type="text" id="website" name="website" placeholder="company.com" required autocomplete="url"/>
+        </div>
+
+        <div class="form-group">
+          <label for="company-stage">What stage best describes your company? <span class="req">*</span></label>
+          <select id="company-stage" name="company_stage" required>
+            <option value="" disabled selected>Select</option>
+            <option value="pre-revenue">Pre-revenue / Idea stage</option>
+            <option value="early-traction">Early traction ($0–$500K ARR)</option>
+            <option value="growth">Growth ($500K–$5M ARR)</option>
+            <option value="scaling">Scaling ($5M+ ARR)</option>
+            <option value="enterprise">Enterprise</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="referral">How did you hear about us? <span class="req">*</span></label>
+          <select id="referral" name="referral" required>
+            <option value="" disabled selected>Select</option>
+            <option value="reddit">Reddit</option>
+            <option value="google">Google search</option>
+            <option value="linkedin">LinkedIn</option>
+            <option value="twitter">Twitter / X</option>
+            <option value="referral">Referral / Word of mouth</option>
+            <option value="podcast">Podcast</option>
+            <option value="newsletter">Newsletter</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <button type="submit" class="submit-btn">
+          Continue to calendar
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+        <p class="submit-note">Once you continue you'll see real-time availability and pick a slot.</p>
+      </form>
+    </div>
+
+  </div>
+</main>
+
+<script>
+const html = document.documentElement;
+const toggleBtn = document.getElementById('theme-toggle');
+const saved = localStorage.getItem('gw-theme');
+if (saved === 'dark') html.removeAttribute('data-theme');
+else html.setAttribute('data-theme', 'light');
+toggleBtn.addEventListener('click', () => {
+  const isLight = html.getAttribute('data-theme') === 'light';
+  if (isLight) {
+    html.removeAttribute('data-theme');
+    localStorage.setItem('gw-theme', 'dark');
+  } else {
+    html.setAttribute('data-theme', 'light');
+    localStorage.setItem('gw-theme', 'light');
+  }
+});
+</script>
+
+<script type="text/javascript">
+  (function (C, A, L) {
+    let p = function (a, ar) { a.q.push(ar); };
+    let d = C.document;
+    C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if (typeof namespace === "string") { cal.ns[namespace] = cal.ns[namespace] || api; p(cal.ns[namespace], ar); p(cal, [L, namespace, ar[2]]); } else { p(cal, ar); } return; } p(cal, ar); };
+  })(window, "https://app.cal.com/embed/embed.js", "init");
+  Cal("init", { origin: "https://cal.com" });
+  Cal("ui", { styles: { branding: { brandColor: "#e85d3a" } }, hideEventTypeDetails: false });
+</script>
+
+<script>
+  document.querySelector('form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (!this.checkValidity()) { this.reportValidity(); return; }
+    Cal("modal", {
+      calLink: "caio-morgado-1itvtf/30min",
+      config: {
+        name: document.getElementById('full-name').value,
+        email: document.getElementById('work-email').value,
+      }
+    });
+  });
+</script>
+</body>
+</html>
