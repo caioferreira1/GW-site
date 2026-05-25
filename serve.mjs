@@ -6,6 +6,17 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = 3000;
 
+// Load .env.local for local development
+try {
+  const envFile = fs.readFileSync(path.join(__dirname, '.env.local'), 'utf8');
+  for (const line of envFile.split('\n')) {
+    const [key, ...vals] = line.split('=');
+    if (key && key.trim() && !key.startsWith('#')) {
+      process.env[key.trim()] = vals.join('=').trim();
+    }
+  }
+} catch { /* no .env.local */ }
+
 const MIME = {
   '.html': 'text/html',
   '.css': 'text/css',
@@ -24,8 +35,42 @@ const MIME = {
   '.pdf': 'application/pdf',
 };
 
-const server = http.createServer((req, res) => {
+function readBody(req) {
+  return new Promise((resolve, reject) => {
+    let body = '';
+    req.on('data', chunk => { body += chunk; });
+    req.on('end', () => {
+      try { resolve(JSON.parse(body || '{}')); }
+      catch { reject(new Error('Invalid JSON')); }
+    });
+    req.on('error', reject);
+  });
+}
+
+const server = http.createServer(async (req, res) => {
   let urlPath = req.url.split('?')[0];
+
+  // API route
+  if (urlPath === '/api/book' && req.method === 'POST') {
+    try {
+      const body = await readBody(req);
+      const { default: handler } = await import('./api/book.js');
+      const mockRes = {
+        _status: 200,
+        _body: null,
+        status(code) { this._status = code; return this; },
+        json(obj) { this._body = obj; return this; },
+      };
+      await handler({ method: req.method, body }, mockRes);
+      res.writeHead(mockRes._status, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(mockRes._body));
+    } catch (err) {
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: err.message }));
+    }
+    return;
+  }
+
   if (urlPath === '/') urlPath = '/index.html';
   if (urlPath === '/book') urlPath = '/book.html';
 

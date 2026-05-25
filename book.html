@@ -28,6 +28,8 @@
   --input-bg:#1a1a1a;
   --input-border:#2a2a2a;
   --input-focus:#e85d3a;
+  --cal-day-hover:rgba(232,93,58,0.10);
+  --cal-slot-bg:#1a1a1a;
 }
 [data-theme="light"]{
   --bg:#f5f3ef;
@@ -44,6 +46,8 @@
   --input-bg:#ffffff;
   --input-border:#d0ccc4;
   --input-focus:#e85d3a;
+  --cal-day-hover:rgba(232,93,58,0.08);
+  --cal-slot-bg:#ffffff;
 }
 html{scroll-behavior:smooth;}
 body{
@@ -211,32 +215,161 @@ body{
 
 /* ── RIGHT PANEL ── */
 .panel-right{
-  padding:36px 36px 32px;
+  position:relative;
+  overflow:hidden;
+  min-height:460px;
 }
+
+/* ── TWO-STEP FLOW ── */
+.step{
+  position:absolute;inset:0;
+  padding:36px 36px 32px;
+  opacity:0;transform:translateX(40px);
+  pointer-events:none;
+  transition:opacity .28s ease,transform .28s ease;
+  overflow-y:auto;
+}
+.step.active{
+  position:relative;
+  opacity:1;transform:translateX(0);
+  pointer-events:all;
+}
+.step.exit-left{
+  opacity:0;transform:translateX(-40px);
+}
+
 .form-heading{
   font-size:22px;font-weight:700;letter-spacing:-0.02em;
   color:var(--text);margin-bottom:6px;
 }
 .form-subheading{
   font-size:13px;color:var(--accent);font-weight:500;
-  margin-bottom:28px;
+  margin-bottom:20px;
 }
 
-.form-row{
-  display:grid;grid-template-columns:1fr 1fr;gap:16px;
-  margin-bottom:16px;
+/* ── CALENDAR ── */
+.cal-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:4px;
 }
+.cal-nav-btn{
+  width:32px;height:32px;border-radius:4px;
+  background:transparent;
+  border:0.5px solid var(--border);
+  color:var(--muted);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:color .2s,border-color .2s,background .2s;
+}
+.cal-nav-btn:hover{color:var(--text);border-color:var(--muted2);background:var(--bg3);}
+.cal-nav-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+.cal-nav-btn:active{transform:scale(0.95);}
+.cal-month-label{
+  font-size:14px;font-weight:600;color:var(--text);
+}
+.cal-grid{
+  display:grid;grid-template-columns:repeat(7,1fr);
+  gap:3px;margin:12px 0 4px;
+}
+.cal-day-name{
+  font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--muted);text-align:center;padding:5px 0;
+}
+.cal-day{
+  background:transparent;
+  border:0.5px solid transparent;
+  border-radius:4px;
+  min-height:36px;
+  font-family:'Space Grotesk',sans-serif;
+  font-size:13px;font-weight:400;color:var(--text);
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+  transition:background .15s,border-color .15s,color .15s;
+}
+.cal-day:not(:disabled):hover{
+  background:var(--cal-day-hover);
+  border-color:var(--border);
+}
+.cal-day:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+.cal-day:not(:disabled):active{transform:scale(0.93);}
+.cal-day.past,.cal-day.weekend{
+  color:var(--muted2);opacity:0.38;cursor:default;
+}
+.cal-day.today{border-color:var(--border2);}
+.cal-day.selected{
+  background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600;
+}
+.cal-day.selected:hover{background:var(--accent2);border-color:var(--accent2);}
+.cal-day.has-limited::after{
+  content:'';position:absolute;bottom:3px;left:50%;transform:translateX(-50%);
+  width:4px;height:4px;border-radius:50%;background:var(--accent);
+}
+.cal-day.selected.has-limited::after{background:#fff;}
+
+/* ── TIME SLOTS ── */
+.slots-section{
+  margin-top:14px;padding-top:14px;
+  border-top:0.5px solid var(--border);
+}
+.slots-heading{
+  font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:10px;
+}
+.slots-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:8px;
+}
+.slot-btn{
+  background:var(--cal-slot-bg);
+  border:0.5px solid var(--border);border-radius:4px;
+  padding:10px 0;
+  font-family:'Space Grotesk',sans-serif;
+  font-size:13px;font-weight:500;color:var(--text);
+  cursor:pointer;text-align:center;
+  transition:border-color .15s,background .15s,color .15s;
+}
+.slot-btn:not(.booked):hover{
+  border-color:var(--accent);background:rgba(232,93,58,0.07);
+}
+.slot-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+.slot-btn:not(.booked):active{transform:scale(0.97);}
+.slot-btn.booked{
+  opacity:0.28;cursor:default;text-decoration:line-through;
+}
+.slot-btn.selected{
+  border-color:var(--accent);background:rgba(232,93,58,0.11);
+  color:var(--accent);font-weight:600;
+}
+
+/* ── SELECTED SLOT CHIP ── */
+.selected-slot-chip{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  background:var(--bg3);border:0.5px solid var(--border);border-radius:4px;
+  padding:10px 14px;font-size:13px;color:var(--text);
+  margin-bottom:20px;
+}
+.change-slot-btn{
+  background:none;border:none;
+  font-family:'Space Grotesk',sans-serif;
+  font-size:12px;font-weight:500;
+  color:var(--accent);cursor:pointer;
+  text-decoration:underline;text-underline-offset:2px;
+  white-space:nowrap;padding:0;
+  transition:color .15s;
+}
+.change-slot-btn:hover{color:var(--accent2);}
+.change-slot-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+
+/* ── FORM ELEMENTS ── */
 .form-group{
   display:flex;flex-direction:column;gap:6px;
-  margin-bottom:16px;
+  margin-bottom:14px;
 }
-.form-group.no-margin{margin-bottom:0;}
 label{
   font-size:12px;font-weight:600;letter-spacing:0.04em;
   color:var(--text);
 }
 label span.req{color:var(--accent);}
-input[type="text"],input[type="email"],input[type="tel"],input[type="url"],select{
+input[type="text"],input[type="email"],input[type="tel"]{
   width:100%;
   background:var(--input-bg);
   border:0.5px solid var(--input-border);
@@ -250,47 +383,10 @@ input[type="text"],input[type="email"],input[type="tel"],input[type="url"],selec
   -webkit-appearance:none;appearance:none;
 }
 input[type="text"]::placeholder,input[type="email"]::placeholder,
-input[type="tel"]::placeholder,input[type="url"]::placeholder{
-  color:var(--muted2);
-}
-input:focus,select:focus{
+input[type="tel"]::placeholder{color:var(--muted2);}
+input:focus{
   border-color:var(--input-focus);
   box-shadow:0 0 0 3px rgba(232,93,58,0.12);
-}
-select{
-  cursor:pointer;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%236a6a6a' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;
-  background-position:right 14px center;
-  padding-right:36px;
-}
-[data-theme="light"] select{
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%236a6560' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-}
-select option{background:var(--bg2);}
-
-.phone-row{
-  display:flex;gap:8px;
-  align-items:stretch;
-}
-.phone-prefix{
-  display:flex;align-items:center;gap:6px;
-  background:var(--input-bg);
-  border:0.5px solid var(--input-border);
-  border-radius:6px;
-  padding:0 12px;
-  font-size:14px;font-weight:400;color:var(--muted);
-  flex-shrink:0;
-  white-space:nowrap;
-}
-.phone-prefix input[type="tel"]{
-  border:none;background:transparent;padding:0;width:100%;box-shadow:none;
-}
-.phone-input-wrap{flex:1;}
-.phone-input-wrap input{border-radius:6px;}
-
-.field-hint{
-  font-size:11px;color:var(--muted);line-height:1.5;margin-top:4px;
 }
 
 .submit-btn{
@@ -311,20 +407,70 @@ select option{background:var(--bg2);}
 [data-theme="light"] .submit-btn:hover{background:#222222;}
 .submit-btn:active{transform:translateY(0);}
 .submit-btn:focus-visible{outline:2px solid var(--accent);outline-offset:3px;}
+.submit-btn:disabled{opacity:0.35;cursor:not-allowed;transform:none;}
+.submit-btn:disabled:hover{background:#0f0f0f;transform:none;}
 
 .submit-note{
   text-align:center;
   font-size:12px;color:var(--muted);
   margin-top:12px;line-height:1.5;
 }
+.form-error{
+  color:#e05252;font-size:13px;font-weight:500;
+  margin-top:10px;text-align:center;
+  display:none;
+}
+.form-error.visible{display:block;}
+
+/* ── SUCCESS STEP ── */
+.success-icon{
+  width:56px;height:56px;border-radius:50%;
+  background:rgba(58,207,110,0.12);
+  border:1.5px solid rgba(58,207,110,0.3);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 20px;
+}
+.success-icon svg{color:#3acf6e;}
+.success-heading{
+  font-size:22px;font-weight:700;letter-spacing:-0.02em;
+  color:var(--text);text-align:center;margin-bottom:8px;
+}
+.success-sub{
+  font-size:14px;color:var(--muted);text-align:center;
+  line-height:1.65;margin-bottom:24px;
+}
+.success-slot-card{
+  background:var(--bg3);border:0.5px solid var(--border);
+  border-radius:8px;padding:16px 20px;
+  display:flex;flex-direction:column;gap:10px;
+  margin-bottom:28px;
+}
+.success-slot-row{
+  display:flex;align-items:center;gap:10px;
+  font-size:13px;color:var(--text);
+}
+.success-slot-row svg{color:var(--accent);flex-shrink:0;}
+.success-back-btn{
+  width:100%;background:transparent;
+  border:0.5px solid var(--border2);border-radius:8px;
+  padding:14px 24px;
+  font-family:'Space Grotesk',sans-serif;
+  font-size:14px;font-weight:500;color:var(--muted);
+  cursor:pointer;
+  transition:color .2s,border-color .2s;
+}
+.success-back-btn:hover{color:var(--text);border-color:var(--muted2);}
+.success-back-btn:focus-visible{outline:2px solid var(--accent);outline-offset:3px;}
 
 /* ── RESPONSIVE ── */
 @media(max-width:720px){
   .booking-card{grid-template-columns:1fr;}
   .panel-left{border-right:none;border-bottom:0.5px solid var(--border);}
-  .form-row{grid-template-columns:1fr;}
   .top-bar{padding:16px 20px;}
   .page{padding:32px 16px 60px;}
+  .panel-right{min-height:auto;}
+  .slots-grid{grid-template-columns:repeat(2,1fr);}
+  .cal-day{min-height:34px;font-size:12px;}
 }
 </style>
 </head>
@@ -403,70 +549,104 @@ select option{background:var(--bg2);}
       </div>
     </div>
 
-    <!-- RIGHT PANEL -->
-    <div class="panel-right">
-      <h2 class="form-heading">Tell us who you are</h2>
-      <p class="form-subheading">We'll prep your category audit before the call.</p>
+    <!-- RIGHT PANEL: two-step flow -->
+    <div class="panel-right" id="panel-right">
 
-      <form action="#" method="post" novalidate>
-        <div class="form-row">
-          <div class="form-group no-margin">
+      <!-- STEP 1: Calendar picker -->
+      <div class="step active" id="step-calendar">
+        <h2 class="form-heading">Pick a time</h2>
+        <p class="form-subheading">Mon–Fri · 30 min · America/Sao_Paulo</p>
+
+        <div class="cal-header">
+          <button class="cal-nav-btn" id="cal-prev" aria-label="Previous month">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <span class="cal-month-label" id="cal-month-label"></span>
+          <button class="cal-nav-btn" id="cal-next" aria-label="Next month">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+          </button>
+        </div>
+
+        <div class="cal-grid" id="cal-grid" role="grid" aria-label="Booking calendar"></div>
+
+        <div class="slots-section" id="slots-section" hidden>
+          <p class="slots-heading" id="slots-heading">Available times</p>
+          <div class="slots-grid" id="slots-grid"></div>
+        </div>
+
+        <button class="submit-btn" id="btn-to-form" disabled style="margin-top:20px;">
+          Continue
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+        <p class="submit-note">Select a date and time above to continue.</p>
+      </div>
+
+      <!-- STEP 2: Contact form -->
+      <div class="step" id="step-form">
+        <div class="selected-slot-chip">
+          <span id="selected-slot-text"></span>
+          <button class="change-slot-btn" id="change-slot-btn" type="button">Change</button>
+        </div>
+
+        <h2 class="form-heading">Your details</h2>
+        <p class="form-subheading">We'll prep your audit before the call.</p>
+
+        <form id="booking-form" novalidate>
+          <div class="form-group">
             <label for="full-name">Full name <span class="req">*</span></label>
             <input type="text" id="full-name" name="full_name" placeholder="Your full name" required autocomplete="name"/>
           </div>
-          <div class="form-group no-margin">
-            <label for="work-email">Work email <span class="req">*</span></label>
+          <div class="form-group">
+            <label for="work-email">Email address <span class="req">*</span></label>
             <input type="email" id="work-email" name="work_email" placeholder="you@company.com" required autocomplete="email"/>
-            <p class="field-hint">We verify the domain in real time — typo'd or burner addresses won't get through.</p>
           </div>
+          <div class="form-group">
+            <label for="website">Company website <span class="req">*</span></label>
+            <input type="text" id="website" name="website" placeholder="company.com" required autocomplete="url"/>
+          </div>
+          <div class="form-group">
+            <label for="phone">Phone number</label>
+            <input type="tel" id="phone" name="phone" placeholder="+1 (555) 000-0000" autocomplete="tel"/>
+          </div>
+
+          <button type="submit" class="submit-btn" id="btn-confirm">
+            Confirm booking
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </button>
+          <p class="form-error" id="form-error"></p>
+          <p class="submit-note">You'll receive a calendar invite with the conference link.</p>
+        </form>
+      </div>
+
+      <!-- STEP 3: Success -->
+      <div class="step" id="step-success">
+        <div style="display:flex;flex-direction:column;justify-content:center;height:100%;padding-top:24px;">
+          <div class="success-icon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <h2 class="success-heading">You're booked!</h2>
+          <p class="success-sub" id="success-sub">A calendar invite is on its way to your inbox.</p>
+          <div class="success-slot-card">
+            <div class="success-slot-row">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              <span id="success-date"></span>
+            </div>
+            <div class="success-slot-row">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <span id="success-time"></span>
+            </div>
+            <div class="success-slot-row">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="15" rx="2"/><polyline points="17 2 12 7 7 2"/></svg>
+              Web conferencing — link sent to your email
+            </div>
+          </div>
+          <button class="success-back-btn" onclick="window.location.href='/'">Back to GroundWave</button>
         </div>
+      </div>
 
-        <div class="form-group">
-          <label for="phone">Phone number <span class="req">*</span></label>
-          <input type="tel" id="phone" name="phone" placeholder="+1 (555) 000-0000" required autocomplete="tel"/>
-        </div>
+    </div><!-- /panel-right -->
 
-        <div class="form-group">
-          <label for="website">What is your website? <span class="req">*</span></label>
-          <input type="text" id="website" name="website" placeholder="company.com" required autocomplete="url"/>
-        </div>
-
-        <div class="form-group">
-          <label for="company-stage">What stage best describes your company? <span class="req">*</span></label>
-          <select id="company-stage" name="company_stage" required>
-            <option value="" disabled selected>Select</option>
-            <option value="pre-revenue">Pre-revenue / Idea stage</option>
-            <option value="early-traction">Early traction ($0–$500K ARR)</option>
-            <option value="growth">Growth ($500K–$5M ARR)</option>
-            <option value="scaling">Scaling ($5M+ ARR)</option>
-            <option value="enterprise">Enterprise</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="referral">How did you hear about us? <span class="req">*</span></label>
-          <select id="referral" name="referral" required>
-            <option value="" disabled selected>Select</option>
-            <option value="reddit">Reddit</option>
-            <option value="google">Google search</option>
-            <option value="linkedin">LinkedIn</option>
-            <option value="twitter">Twitter / X</option>
-            <option value="referral">Referral / Word of mouth</option>
-            <option value="podcast">Podcast</option>
-            <option value="newsletter">Newsletter</option>
-            <option value="other">Other</option>
-          </select>
-        </div>
-
-        <button type="submit" class="submit-btn">
-          Continue to calendar
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-        </button>
-        <p class="submit-note">Once you continue you'll see real-time availability and pick a slot.</p>
-      </form>
-    </div>
-
-  </div>
+  </div><!-- /booking-card -->
 </main>
 
 <script>
@@ -487,28 +667,251 @@ toggleBtn.addEventListener('click', () => {
 });
 </script>
 
-<script type="text/javascript">
-  (function (C, A, L) {
-    let p = function (a, ar) { a.q.push(ar); };
-    let d = C.document;
-    C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if (typeof namespace === "string") { cal.ns[namespace] = cal.ns[namespace] || api; p(cal.ns[namespace], ar); p(cal, [L, namespace, ar[2]]); } else { p(cal, ar); } return; } p(cal, ar); };
-  })(window, "https://app.cal.com/embed/embed.js", "init");
-  Cal("init", { origin: "https://cal.com" });
-  Cal("ui", { styles: { branding: { brandColor: "#e85d3a" } }, hideEventTypeDetails: false });
-</script>
 
 <script>
-  document.querySelector('form').addEventListener('submit', function (e) {
-    e.preventDefault();
-    if (!this.checkValidity()) { this.reportValidity(); return; }
-    Cal("modal", {
-      calLink: "caio-morgado-1itvtf/30min",
-      config: {
-        name: document.getElementById('full-name').value,
-        email: document.getElementById('work-email').value,
+(function () {
+  var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var DAY_NAMES = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+  var ALL_SLOTS = ['9:00 AM','10:00 AM','11:00 AM','2:00 PM','3:00 PM','4:00 PM'];
+  var STATE = { date: null, time: null };
+  var calYear, calMonth;
+
+  var today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  function lcg(seed) {
+    return ((seed * 1664525 + 1013904223) & 0x7fffffff);
+  }
+
+  function mockBookedCount(y, m, d) {
+    return lcg(y * 10000 + m * 100 + d) % 4;
+  }
+
+  function bookedSlotIndices(y, m, d) {
+    var count = mockBookedCount(y, m, d);
+    var seed = y * 10000 + m * 100 + d;
+    var indices = [];
+    for (var i = 0; i < 6 && indices.length < count; i++) {
+      var h = lcg(seed + i * 31);
+      if ((h % (6 - i)) < (count - indices.length)) indices.push(i);
+    }
+    return indices;
+  }
+
+  function pad2(n) { return String(n).padStart(2, '0'); }
+
+  function buildCalendar(year, month) {
+    calYear = year;
+    calMonth = month;
+    document.getElementById('cal-month-label').textContent = MONTHS[month] + ' ' + year;
+
+    var grid = document.getElementById('cal-grid');
+    grid.innerHTML = '';
+
+    DAY_NAMES.forEach(function (name) {
+      var cell = document.createElement('div');
+      cell.className = 'cal-day-name';
+      cell.textContent = name;
+      cell.setAttribute('role', 'columnheader');
+      cell.setAttribute('aria-label', name);
+      grid.appendChild(cell);
+    });
+
+    var firstDay = new Date(year, month, 1).getDay();
+    var daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    for (var i = 0; i < firstDay; i++) {
+      var empty = document.createElement('div');
+      empty.setAttribute('role', 'presentation');
+      grid.appendChild(empty);
+    }
+
+    for (var d = 1; d <= daysInMonth; d++) {
+      var date = new Date(year, month, d);
+      var dow = date.getDay();
+      var isPast = date < today;
+      var isWeekend = dow === 0 || dow === 6;
+      var dateISO = year + '-' + pad2(month + 1) + '-' + pad2(d);
+
+      var btn = document.createElement('button');
+      btn.className = 'cal-day';
+      btn.textContent = d;
+      btn.type = 'button';
+      btn.setAttribute('aria-label', date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }));
+      btn.setAttribute('data-date', dateISO);
+      btn.setAttribute('role', 'gridcell');
+
+      if (isPast || isWeekend) {
+        btn.classList.add(isWeekend ? 'weekend' : 'past');
+        btn.disabled = true;
+        btn.setAttribute('aria-disabled', 'true');
+      } else {
+        var bookedCount = mockBookedCount(year, month + 1, d);
+        var available = 6 - bookedCount;
+        if (available <= 0) {
+          btn.classList.add('past');
+          btn.disabled = true;
+          btn.setAttribute('aria-disabled', 'true');
+        } else {
+          if (available <= 1) btn.classList.add('has-limited');
+          (function (iso, y, m2, day) {
+            btn.addEventListener('click', function () { onDayClick(iso, y, m2, day); });
+          })(dateISO, year, month + 1, d);
+        }
       }
+
+      if (date.getTime() === today.getTime()) btn.classList.add('today');
+      if (dateISO === STATE.date) btn.classList.add('selected');
+
+      grid.appendChild(btn);
+    }
+  }
+
+  function onDayClick(dateISO, y, m, d) {
+    STATE.date = dateISO;
+    STATE.time = null;
+    document.querySelectorAll('.cal-day.selected').forEach(function (b) { b.classList.remove('selected'); });
+    var sel = document.querySelector('[data-date="' + dateISO + '"]');
+    if (sel) sel.classList.add('selected');
+    document.getElementById('btn-to-form').disabled = true;
+    renderSlots(dateISO, y, m, d);
+  }
+
+  function renderSlots(dateISO, y, m, d) {
+    var booked = bookedSlotIndices(y, m, d);
+    var grid = document.getElementById('slots-grid');
+    grid.innerHTML = '';
+
+    var date = new Date(y, m - 1, d);
+    var label = date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    document.getElementById('slots-heading').textContent = 'Available times for ' + label;
+
+    ALL_SLOTS.forEach(function (time, i) {
+      var btn = document.createElement('button');
+      btn.className = 'slot-btn';
+      btn.textContent = time;
+      btn.type = 'button';
+
+      if (booked.indexOf(i) !== -1) {
+        btn.classList.add('booked');
+        btn.disabled = true;
+        btn.setAttribute('aria-label', time + ', unavailable');
+      } else {
+        (function (t, b) {
+          btn.addEventListener('click', function () { onSlotClick(t, b); });
+        })(time, btn);
+      }
+      grid.appendChild(btn);
+    });
+
+    document.getElementById('slots-section').removeAttribute('hidden');
+  }
+
+  function onSlotClick(time, btn) {
+    STATE.time = time;
+    document.querySelectorAll('.slot-btn.selected').forEach(function (b) { b.classList.remove('selected'); });
+    btn.classList.add('selected');
+    document.getElementById('btn-to-form').disabled = false;
+  }
+
+  function formatSlotDisplay(dateISO, time) {
+    var parts = dateISO.split('-').map(Number);
+    var date = new Date(parts[0], parts[1] - 1, parts[2]);
+    var dateStr = date.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+    return dateStr + '  ·  ' + time;
+  }
+
+  function goToForm() {
+    document.getElementById('selected-slot-text').textContent = formatSlotDisplay(STATE.date, STATE.time);
+    var s1 = document.getElementById('step-calendar');
+    var s2 = document.getElementById('step-form');
+    s2.classList.add('active');
+    s1.classList.remove('active');
+    s1.classList.add('exit-left');
+  }
+
+  function goToCalendar() {
+    var s1 = document.getElementById('step-calendar');
+    var s2 = document.getElementById('step-form');
+    s1.classList.add('active');
+    s1.classList.remove('exit-left');
+    s2.classList.remove('active');
+    document.getElementById('panel-right').scrollTop = 0;
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    var now = new Date();
+    buildCalendar(now.getFullYear(), now.getMonth());
+
+    var navYear = now.getFullYear();
+    var navMonth = now.getMonth();
+
+    document.getElementById('cal-prev').addEventListener('click', function () {
+      if (calYear === navYear && calMonth === navMonth) return;
+      var m = calMonth - 1, y = calYear;
+      if (m < 0) { m = 11; y--; }
+      buildCalendar(y, m);
+    });
+
+    document.getElementById('cal-next').addEventListener('click', function () {
+      var m = calMonth + 1, y = calYear;
+      if (m > 11) { m = 0; y++; }
+      buildCalendar(y, m);
+    });
+
+    document.getElementById('btn-to-form').addEventListener('click', goToForm);
+    document.getElementById('change-slot-btn').addEventListener('click', goToCalendar);
+
+    document.getElementById('booking-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (!this.checkValidity()) { this.reportValidity(); return; }
+
+      var name = document.getElementById('full-name').value.trim();
+      var email = document.getElementById('work-email').value.trim();
+      var phone = document.getElementById('phone').value.trim();
+      var website = document.getElementById('website').value.trim();
+
+      var btn = document.getElementById('btn-confirm');
+      var errEl = document.getElementById('form-error');
+      btn.disabled = true;
+      btn.innerHTML = 'Booking…';
+      errEl.classList.remove('visible');
+
+      fetch('/api/book', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: name, email: email, phone: phone, website: website, date: STATE.date, time: STATE.time })
+      })
+      .then(function (res) { return res.json().then(function (d) { return { ok: res.ok, data: d }; }); })
+      .then(function (r) {
+        if (!r.ok) {
+          errEl.textContent = r.data.error || 'Booking failed — please try again.';
+          errEl.classList.add('visible');
+          btn.disabled = false;
+          btn.innerHTML = 'Confirm booking <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>';
+          return;
+        }
+        var parts = STATE.date.split('-').map(Number);
+        var d = new Date(parts[0], parts[1] - 1, parts[2]);
+        document.getElementById('success-date').textContent = d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+        document.getElementById('success-time').textContent = STATE.time + ' · America/Sao_Paulo';
+        document.getElementById('success-sub').textContent = 'A calendar invite is on its way to ' + email + '.';
+
+        var s2 = document.getElementById('step-form');
+        var s3 = document.getElementById('step-success');
+        s2.classList.remove('active');
+        s2.classList.add('exit-left');
+        s3.classList.add('active');
+      })
+      .catch(function () {
+        errEl.textContent = 'Network error — please check your connection and try again.';
+        errEl.classList.add('visible');
+        btn.disabled = false;
+        btn.innerHTML = 'Confirm booking <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>';
+      });
     });
   });
+})();
 </script>
 </body>
 </html>
