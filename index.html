@@ -811,58 +811,598 @@ footer.footer-v2{display:block;padding:72px 60px 48px;}
   </div>
 </section>
 
-<!-- 6. SERVICES -->
-<section id="services" class="services">
-  <div class="services-inner reveal">
-    <div class="section-label">How we work</div>
-    <h2 class="section-title">Choose your<br><span class="light">approach</span></h2>
-    <div class="services-grid">
+<!-- 6. HOW IT WORKS + FEATURE GRID -->
+<style>
+/* ── SHARED SECTIONS ──────────────────────────────────────────── */
+.gw-dark { background:var(--bg); padding:96px 24px; border-top:0.5px solid var(--border); }
+.gw-dark.no-top { padding-top:0; border-top:none; }
+.gw-wrap { max-width:1152px; margin:0 auto; }
+.gw-eyebrow {
+  font-size:11px; letter-spacing:0.18em; text-transform:uppercase;
+  color:#e85d3a; margin-bottom:16px; font-weight:600; font-family:'Space Grotesk',sans-serif;
+}
+.gw-section-h2 {
+  font-size:clamp(32px,5vw,52px); font-weight:700;
+  color:var(--text); letter-spacing:-0.03em; line-height:1.1;
+  margin-bottom:64px; font-family:'Space Grotesk',sans-serif;
+}
+.gw-section-h2 .gw-dim { color:var(--muted2); font-weight:300; }
+.gw-section-h2 .gw-acc { color:#e85d3a; }
 
-      <div class="service-card">
-        <div class="service-badge">Self-directed · Strategy first</div>
-        <div class="service-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e85d3a" stroke-width="1.8" stroke-linecap="round"><path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
+/* ── CARD BASE ────────────────────────────────────────────────── */
+.gw-card {
+  position:relative; border-radius:24px; overflow:hidden;
+  background:var(--bg2); border:1px solid var(--border);
+  box-shadow:0 4px 32px rgba(0,0,0,0.12),0 1px 3px rgba(0,0,0,0.08);
+  display:flex; flex-direction:column;
+  opacity:0; transform:translateY(20px);
+  transition:opacity 0.55s cubic-bezier(0.25,0.46,0.45,0.94),
+             transform 0.55s cubic-bezier(0.25,0.46,0.45,0.94);
+  cursor:default;
+}
+.gw-card.gw-vis { opacity:1; transform:translateY(0); }
+.gw-card.gw-vis:hover { transform:translateY(-5px); transition:transform 0.28s cubic-bezier(0.25,0.46,0.45,0.94); }
+.gw-card::before {
+  content:''; position:absolute; inset:0; pointer-events:none; z-index:0;
+  opacity:0.04; background-image:radial-gradient(circle,var(--text) 1px,transparent 1px);
+  background-size:24px 24px;
+}
+.gw-card::after {
+  content:''; position:absolute; inset:0; pointer-events:none; z-index:0;
+  background:radial-gradient(ellipse 70% 35% at 50% 0%,rgba(232,93,58,0.05) 0%,transparent 70%);
+}
+.gw-card-inner { position:relative; z-index:1; display:flex; flex-direction:column; height:100%; }
+
+/* ── HOW IT WORKS GRID ────────────────────────────────────────── */
+.hiw-grid { display:grid; grid-template-columns:1fr; gap:20px; }
+@media(min-width:768px){ .hiw-grid{ grid-template-columns:1fr 1fr; } }
+@media(min-width:1024px){ .hiw-grid{ grid-template-columns:1fr 1fr 1fr; } }
+
+/* card header */
+.gw-card-head { padding:24px 24px 16px; display:flex; align-items:center; gap:12px; }
+.gw-step-circle {
+  width:32px; height:32px; border-radius:50%; display:flex; align-items:center;
+  justify-content:center; font-size:13px; font-weight:700; color:var(--text); flex-shrink:0;
+}
+.gw-step-circle.dim { background:var(--bg3); border:1px solid var(--border2); }
+.gw-step-circle.acc { background:#e85d3a; color:#fff; }
+.gw-badge-pill {
+  font-size:10px; letter-spacing:0.16em; text-transform:uppercase; font-weight:600;
+  font-family:'Space Grotesk',sans-serif;
+}
+.gw-badge-pill.dim { color:var(--muted); }
+.gw-badge-pill.acc { color:#e85d3a; }
+
+/* visual slot */
+.gw-slot {
+  margin:0 20px; border-radius:16px; overflow:hidden;
+  border:1px solid var(--border); background:var(--bg);
+  aspect-ratio:4/3; display:flex; align-items:center; justify-content:center;
+}
+.gw-slot.auto { aspect-ratio:auto; min-height:160px; }
+
+/* card text */
+.gw-card-txt { padding:20px 24px; }
+.gw-card-ttl { font-size:17px; font-weight:700; line-height:1.3; color:var(--text); letter-spacing:-0.02em; margin-bottom:8px; font-family:'Space Grotesk',sans-serif; }
+.gw-card-dsc { font-size:13px; color:var(--muted); line-height:1.65; font-family:'Space Grotesk',sans-serif; }
+
+/* ── TYPING TERMINAL ──────────────────────────────────────────── */
+.term-box { width:100%; border-radius:12px; padding:16px; background:var(--bg2); border:1px solid var(--border); }
+.term-dots { display:flex; gap:6px; margin-bottom:16px; }
+.term-dot { width:10px; height:10px; border-radius:50%; background:var(--border2); }
+.term-prompt { font-family:monospace; font-size:11px; color:var(--muted); margin-bottom:10px; }
+.term-answer { font-family:monospace; font-size:12px; color:var(--text); min-height:36px; line-height:1.6; }
+.gw-cursor {
+  display:inline-block; width:7px; height:13px;
+  background:#e85d3a; margin-left:2px; vertical-align:middle;
+  animation:gwBlink 0.85s step-end infinite;
+}
+@keyframes gwBlink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+/* ── PLAN CARDS ───────────────────────────────────────────────── */
+.plan-list { display:flex; flex-direction:column; gap:12px; width:100%; padding:24px 20px; }
+.plan-row {
+  display:flex; align-items:center; justify-content:space-between;
+  border-radius:12px; padding:12px 16px; background:var(--bg);
+  opacity:0; transform:translateX(-14px);
+  transition:opacity 0.42s cubic-bezier(0.25,0.46,0.45,0.94),
+             transform 0.42s cubic-bezier(0.25,0.46,0.45,0.94);
+}
+.plan-row.pv { opacity:1; transform:translateX(0); }
+.plan-row-left { display:flex; align-items:center; gap:10px; }
+.plan-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.plan-row-name { font-size:13px; font-weight:600; font-family:'Space Grotesk',sans-serif; }
+.plan-row-right { display:flex; align-items:center; gap:8px; }
+.plan-tag { font-size:11px; color:var(--muted); font-family:'Space Grotesk',sans-serif; }
+.plan-chk {
+  width:20px; height:20px; border-radius:50%; background:#e85d3a;
+  display:flex; align-items:center; justify-content:center;
+  font-size:10px; font-weight:700; color:#fff;
+  transform:scale(0); opacity:0;
+  transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1),opacity 0.2s;
+}
+.plan-chk.cv { transform:scale(1); opacity:1; }
+
+/* ── BAR CHART ────────────────────────────────────────────────── */
+.chart-wrap { padding:20px; display:flex; flex-direction:column; gap:12px; width:100%; }
+.chart-lbl { font-family:monospace; font-size:10px; color:var(--muted); }
+.chart-bars { display:flex; align-items:flex-end; gap:6px; height:80px; }
+.chart-col { flex:1; display:flex; align-items:flex-end; height:100%; }
+.chart-bar { width:100%; border-radius:3px 3px 0 0; }
+.chart-days { display:flex; justify-content:space-between; }
+.chart-day { font-family:monospace; font-size:9px; }
+
+/* ── FEATURE GRID ─────────────────────────────────────────────── */
+.fg-grid { display:grid; grid-template-columns:1fr; gap:20px; }
+@media(min-width:768px){ .fg-grid{ grid-template-columns:1fr 1fr; } }
+
+/* ── GEO VISUAL ───────────────────────────────────────────────── */
+.geo-inner { width:100%; padding:16px; display:flex; flex-direction:column; gap:10px; }
+.geo-phase { display:none; }
+.geo-phase.geo-on { display:flex; flex-direction:column; gap:8px; }
+.geo-steps { display:flex; gap:5px; }
+.geo-pip { height:3px; border-radius:2px; background:var(--border); flex:1; transition:background 0.4s; }
+.geo-pip.on { background:#e85d3a; }
+.chat-bubble {
+  background:var(--bg3); border:1px solid var(--border2); border-radius:12px 12px 12px 4px;
+  padding:10px 12px; font-size:12px; color:var(--text); line-height:1.5; font-family:'Space Grotesk',sans-serif;
+}
+.chat-mention { color:#e85d3a; font-weight:600; }
+.traffic-hd { display:flex; justify-content:space-between; align-items:flex-start; }
+.traffic-val { font-size:22px; font-weight:700; color:var(--text); font-family:'Space Grotesk',sans-serif; }
+.traffic-up { font-size:11px; color:#e85d3a; font-weight:600; font-family:'Space Grotesk',sans-serif; }
+.traffic-sub { font-size:10px; color:var(--muted); font-family:'Space Grotesk',sans-serif; margin-bottom:4px; }
+.traffic-svg-wrap { height:54px; }
+.traffic-svg-wrap svg { width:100%; height:100%; }
+.llm-row { display:flex; align-items:center; gap:8px; }
+.llm-name { font-size:11px; color:var(--muted); font-family:'Space Grotesk',sans-serif; min-width:72px; }
+.llm-track { flex:1; height:4px; background:var(--border); border-radius:2px; overflow:hidden; }
+.llm-fill { height:100%; border-radius:2px; background:#e85d3a; transition:width 0.8s ease; }
+.llm-pct { font-size:11px; color:var(--text); font-family:'Space Grotesk',sans-serif; min-width:28px; text-align:right; }
+
+/* ── SUBREDDITS VISUAL ────────────────────────────────────────── */
+.sub-list { display:flex; flex-direction:column; gap:8px; width:100%; padding:16px; }
+.sub-item {
+  display:flex; align-items:center; justify-content:space-between;
+  background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:10px 12px;
+  opacity:0; transform:translateX(-10px);
+  transition:opacity 0.35s ease,transform 0.35s ease;
+}
+.sub-item.sv { opacity:1; transform:translateX(0); }
+.sub-name { font-size:12px; color:var(--text); font-weight:500; font-family:'Space Grotesk',sans-serif; }
+.sub-match {
+  font-size:10px; font-weight:700; color:#e85d3a;
+  background:rgba(232,93,58,0.1); border:1px solid rgba(232,93,58,0.2);
+  border-radius:20px; padding:2px 8px;
+  transform:scale(0); opacity:0;
+  transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1),opacity 0.2s;
+}
+.sub-match.mv { transform:scale(1); opacity:1; }
+
+/* ── POSTS VISUAL ─────────────────────────────────────────────── */
+.posts-inner { width:100%; padding:16px; display:flex; flex-direction:column; gap:10px; }
+.post-q {
+  background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:10px 12px;
+  font-size:11px; color:var(--muted); font-family:'Space Grotesk',sans-serif; line-height:1.5;
+}
+.post-q strong { color:var(--text); display:block; margin-bottom:4px; font-size:12px; }
+.post-r {
+  background:#0c1a0c; border:1px solid #1a2e1a; border-radius:10px; padding:10px 12px;
+  font-size:11px; color:#4CAF50; font-family:monospace; line-height:1.6; min-height:44px;
+}
+[data-theme="light"] .post-r { background:#e8f5e9; border-color:#a5d6a7; }
+.post-btn {
+  align-self:flex-end; background:#e85d3a; color:#fff;
+  font-size:11px; font-weight:700; font-family:'Space Grotesk',sans-serif;
+  padding:6px 14px; border-radius:20px; opacity:0; transition:opacity 0.4s;
+}
+.post-btn.pbv { opacity:1; }
+
+/* ── COMMAND VISUAL ───────────────────────────────────────────── */
+.cmd-inner { width:100%; padding:20px; display:flex; flex-direction:column; gap:10px; }
+.cmd-ev {
+  display:flex; align-items:center; gap:10px;
+  opacity:0; transform:translateY(6px);
+  transition:opacity 0.35s ease,transform 0.35s ease;
+}
+.cmd-ev.cev { opacity:1; transform:translateY(0); }
+.cmd-icon {
+  width:20px; height:20px; border-radius:50%; background:#e85d3a; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; font-size:10px; color:#fff; font-weight:700;
+}
+.cmd-txt { font-size:12px; color:var(--text); font-family:'Space Grotesk',sans-serif; }
+.cmd-badge {
+  margin-top:4px; align-self:flex-start;
+  background:rgba(232,93,58,0.1); border:1px solid rgba(232,93,58,0.3);
+  border-radius:20px; padding:4px 12px;
+  font-size:12px; font-weight:700; color:#e85d3a; font-family:'Space Grotesk',sans-serif;
+  opacity:0; transition:opacity 0.5s;
+}
+.cmd-badge.cbv { opacity:1; }
+</style>
+
+<!-- HOW IT WORKS -->
+<section class="gw-dark" id="hiw-cards">
+  <div class="gw-wrap">
+    <p class="gw-eyebrow">HOW IT WORKS</p>
+    <h2 class="gw-section-h2">Three steps. <span class="gw-dim">Then you grow.</span></h2>
+    <div class="hiw-grid">
+
+      <!-- Card 1: Describe -->
+      <div class="gw-card" data-gw-delay="0">
+        <div class="gw-card-inner">
+          <div class="gw-card-head">
+            <div class="gw-step-circle dim">1</div>
+            <span class="gw-badge-pill dim">Describe</span>
+          </div>
+          <div class="gw-slot">
+            <div style="width:100%;padding:20px;">
+              <div class="term-box">
+                <div class="term-dots"><div class="term-dot"></div><div class="term-dot"></div><div class="term-dot"></div></div>
+                <p class="term-prompt">&gt; What does your product do?</p>
+                <p class="term-answer"><span id="hiw-typed"></span><span id="hiw-cursor" class="gw-cursor"></span></p>
+              </div>
+            </div>
+          </div>
+          <div class="gw-card-txt">
+            <h3 class="gw-card-ttl">Tell us about your product.</h3>
+            <p class="gw-card-dsc">A few sentences. Who it's for, what it does, and what's working so far.</p>
+          </div>
         </div>
-        <h3>The Pathway</h3>
-        <div class="service-price-block">
-          <div class="service-price"><sup>$</sup>500</div>
-        </div>
-        <div class="service-note">One-time · Delivered in 7 days · You run it</div>
-        <p>Best for teams who understand Reddit but need the strategic foundation done right. We map the communities, write the playbook, and hand you the unfair advantage. You handle execution.</p>
-        <ul class="service-list">
-          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e85d3a" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>Deep subreddit research &amp; community audit</li>
-          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e85d3a" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>Custom content guidelines &amp; tone of voice</li>
-          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e85d3a" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>90-day posting schedule &amp; karma strategy</li>
-          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e85d3a" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>Account setup &amp; anti-ban methodology</li>
-          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e85d3a" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>10 ready-to-post content templates</li>
-        </ul>
-        <a class="btn-primary" href="#contact">Get my Pathway</a>
       </div>
 
-      <div class="service-card">
-        <div class="service-badge">Fully managed · Done for you</div>
-        <div class="service-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e85d3a" stroke-width="1.8" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+      <!-- Card 2: Get the Plan -->
+      <div class="gw-card" data-gw-delay="110">
+        <div class="gw-card-inner">
+          <div class="gw-card-head">
+            <div class="gw-step-circle dim">2</div>
+            <span class="gw-badge-pill dim">Get the Plan</span>
+          </div>
+          <div class="gw-slot">
+            <div class="plan-list">
+              <div class="plan-row" id="pr0" style="border:1px solid rgba(232,93,58,0.2);">
+                <div class="plan-row-left">
+                  <div class="plan-dot" style="background:#e85d3a;"></div>
+                  <span class="plan-row-name" style="color:#e85d3a;">ChatGPT</span>
+                </div>
+                <div class="plan-row-right">
+                  <span class="plan-tag">get cited</span>
+                  <div class="plan-chk" id="pc0">✓</div>
+                </div>
+              </div>
+              <div class="plan-row" id="pr1" style="border:1px solid var(--border);">
+                <div class="plan-row-left">
+                  <div class="plan-dot" style="background:var(--muted2);"></div>
+                  <span class="plan-row-name" style="color:var(--text);">r/SaaS</span>
+                </div>
+                <div class="plan-row-right">
+                  <span class="plan-tag">promo ok · Tue</span>
+                  <div class="plan-chk" id="pc1">✓</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="gw-card-txt">
+            <h3 class="gw-card-ttl">Get your action plan.</h3>
+            <p class="gw-card-dsc">Which subreddits to post in and how to get ChatGPT to mention you. Step by step.</p>
+          </div>
         </div>
-        <h3>Full Management</h3>
-        <div class="service-price-block">
-          <div class="service-price"><sup>$</sup>1,000</div>
+      </div>
+
+      <!-- Card 3: Post + Track -->
+      <div class="gw-card" data-gw-delay="220">
+        <div class="gw-card-inner">
+          <div class="gw-card-head">
+            <div class="gw-step-circle acc">3</div>
+            <span class="gw-badge-pill acc">Post + Track</span>
+          </div>
+          <div class="gw-slot">
+            <div class="chart-wrap">
+              <p class="chart-lbl">/ visitors this week</p>
+              <div class="chart-bars" id="gwchart-bars"></div>
+              <div class="chart-days" id="gwchart-days"></div>
+            </div>
+          </div>
+          <div class="gw-card-txt">
+            <h3 class="gw-card-ttl">Post it. See the results.</h3>
+            <p class="gw-card-dsc">Watch your traffic, your karma, and when ChatGPT starts mentioning you.</p>
+          </div>
         </div>
-        <div class="service-note">Monthly · We handle everything</div>
-        <p>Best for brands who want Reddit working without adding to their internal workload. We run the accounts, craft every post to match each community's culture, manage engagement, and report on real outcomes.</p>
-        <ul class="service-list">
-          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e85d3a" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>Multi-account management across subreddits</li>
-          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e85d3a" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>20+ posts/month crafted per community</li>
-          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e85d3a" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>Active engagement &amp; comment management</li>
-          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e85d3a" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>Brand mention monitoring &amp; reputation defense</li>
-          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e85d3a" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>Weekly reports + performance dashboard</li>
-        </ul>
-        <a class="btn-primary" href="#contact">Talk to an expert</a>
       </div>
 
     </div>
   </div>
 </section>
+
+<!-- FEATURE GRID -->
+<section class="gw-dark no-top" id="fg-cards">
+  <div class="gw-wrap">
+    <h2 class="gw-section-h2" style="margin-bottom:48px;">Everything you need to grow through<br><span class="gw-acc">Reddit</span> and AI search.</h2>
+    <div class="fg-grid">
+
+      <!-- Card A: GEO -->
+      <div class="gw-card" data-gw-delay="0">
+        <div class="gw-card-inner">
+          <div class="gw-card-head">
+            <span class="gw-badge-pill acc">GEO Visibility</span>
+          </div>
+          <div class="gw-slot auto">
+            <div class="geo-inner">
+              <div class="geo-steps">
+                <div class="geo-pip" id="gp0"></div>
+                <div class="geo-pip" id="gp1"></div>
+                <div class="geo-pip" id="gp2"></div>
+              </div>
+              <div class="geo-phase" id="geo0">
+                <div class="chat-bubble">For expense tracking, <span class="chat-mention">GroundWave</span> keeps coming up in discussions — founders mentioned it specifically for their setup.</div>
+                <div style="font-size:10px;color:var(--muted);font-family:'Space Grotesk',sans-serif;">ChatGPT · in response to "best tools for freelancers"</div>
+              </div>
+              <div class="geo-phase" id="geo1">
+                <div class="traffic-sub">AI-referred visitors / month</div>
+                <div class="traffic-hd">
+                  <div class="traffic-val">2,847</div>
+                  <div class="traffic-up">↗ +312%</div>
+                </div>
+                <div class="traffic-svg-wrap">
+                  <svg viewBox="0 0 200 54" preserveAspectRatio="none">
+                    <defs>
+                      <linearGradient id="gwTg" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#e85d3a" stop-opacity="0.35"/>
+                        <stop offset="100%" stop-color="#e85d3a" stop-opacity="0"/>
+                      </linearGradient>
+                    </defs>
+                    <path d="M0 52 L40 46 L80 38 L120 26 L160 14 L200 3 L200 54 L0 54 Z" fill="url(#gwTg)"/>
+                    <path d="M0 52 L40 46 L80 38 L120 26 L160 14 L200 3" fill="none" stroke="#e85d3a" stroke-width="1.5"/>
+                  </svg>
+                </div>
+              </div>
+              <div class="geo-phase" id="geo2">
+                <div style="font-size:10px;color:var(--muted);font-family:'Space Grotesk',sans-serif;margin-bottom:6px;">LLM source breakdown</div>
+                <div style="display:flex;flex-direction:column;gap:8px;">
+                  <div class="llm-row"><span class="llm-name">ChatGPT</span><div class="llm-track"><div class="llm-fill" id="llmf0" style="width:0%"></div></div><span class="llm-pct">62%</span></div>
+                  <div class="llm-row"><span class="llm-name">Claude</span><div class="llm-track"><div class="llm-fill" id="llmf1" style="width:0%"></div></div><span class="llm-pct">23%</span></div>
+                  <div class="llm-row"><span class="llm-name">Perplexity</span><div class="llm-track"><div class="llm-fill" id="llmf2" style="width:0%"></div></div><span class="llm-pct">15%</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="gw-card-txt">
+            <h3 class="gw-card-ttl">Get cited by AI.</h3>
+            <p class="gw-card-dsc">GroundWave makes your brand appear in ChatGPT, Claude, and Perplexity answers — where buyers are searching now.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card B: Subreddits -->
+      <div class="gw-card" data-gw-delay="110">
+        <div class="gw-card-inner">
+          <div class="gw-card-head">
+            <span class="gw-badge-pill acc">Community Intel</span>
+          </div>
+          <div class="gw-slot auto">
+            <div class="sub-list">
+              <div class="sub-item" id="si0"><span class="sub-name">r/startups</span><span class="sub-match" id="sm0">✓ Match</span></div>
+              <div class="sub-item" id="si1"><span class="sub-name">r/SaaS</span><span class="sub-match" id="sm1">✓ Match</span></div>
+              <div class="sub-item" id="si2"><span class="sub-name">r/marketing</span><span class="sub-match" id="sm2">✓ Match</span></div>
+              <div class="sub-item" id="si3"><span class="sub-name">r/Entrepreneur</span><span class="sub-match" id="sm3">✓ Match</span></div>
+            </div>
+          </div>
+          <div class="gw-card-txt">
+            <h3 class="gw-card-ttl">Find your communities.</h3>
+            <p class="gw-card-dsc">We map every subreddit where your buyers hang out — ranked by engagement, trust, and purchase intent.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card C: Posts -->
+      <div class="gw-card" data-gw-delay="0">
+        <div class="gw-card-inner">
+          <div class="gw-card-head">
+            <span class="gw-badge-pill dim">Content Engine</span>
+          </div>
+          <div class="gw-slot auto">
+            <div class="posts-inner">
+              <div class="post-q">
+                <strong>r/SaaS · pinned question</strong>
+                What tools do you use for tracking freelance expenses?
+              </div>
+              <div class="post-r"><span id="post-typed"></span><span id="post-cursor" class="gw-cursor" style="background:#4CAF50;"></span></div>
+              <div class="post-btn" id="post-btn">Ready to Post</div>
+            </div>
+          </div>
+          <div class="gw-card-txt">
+            <h3 class="gw-card-ttl">Craft authentic replies.</h3>
+            <p class="gw-card-dsc">Each response is written for the community, the context, and the conversation — never generic, never spammy.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card D: Command -->
+      <div class="gw-card" data-gw-delay="110">
+        <div class="gw-card-inner">
+          <div class="gw-card-head">
+            <span class="gw-badge-pill dim">Autopilot</span>
+          </div>
+          <div class="gw-slot auto">
+            <div class="cmd-inner">
+              <div class="cmd-ev" id="ce0"><div class="cmd-icon">✓</div><span class="cmd-txt">Found 14 opportunities</span></div>
+              <div class="cmd-ev" id="ce1"><div class="cmd-icon">✓</div><span class="cmd-txt">Generated 8 comments</span></div>
+              <div class="cmd-ev" id="ce2"><div class="cmd-icon">✓</div><span class="cmd-txt">Published 3 responses</span></div>
+              <div class="cmd-ev" id="ce3"><div class="cmd-icon">✓</div><span class="cmd-txt">12 new visitors</span></div>
+              <div class="cmd-badge" id="cmd-badge">+28% visibility</div>
+            </div>
+          </div>
+          <div class="gw-card-txt">
+            <h3 class="gw-card-ttl">Run on autopilot.</h3>
+            <p class="gw-card-dsc">Set your strategy once. GroundWave monitors threads, posts responses, and reports results — weekly.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script>
+(function(){
+  function wait(ms){ return new Promise(function(r){ setTimeout(r,ms); }); }
+
+  /* ── Card entrance (IntersectionObserver) ────────────────────── */
+  var gwCards = document.querySelectorAll('.gw-card');
+  var gwIO = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        var el=e.target, d=parseInt(el.dataset.gwDelay||0,10);
+        setTimeout(function(){ el.classList.add('gw-vis'); }, d);
+        gwIO.unobserve(el);
+      }
+    });
+  },{threshold:0.15});
+  gwCards.forEach(function(c){ gwIO.observe(c); });
+
+  /* ── Typing Visual ───────────────────────────────────────────── */
+  var hiwTyped=document.getElementById('hiw-typed');
+  var hiwCursor=document.getElementById('hiw-cursor');
+  var TYPING_TEXT='A receipt scanner for freelancers and small agencies';
+  if(hiwTyped){
+    (function typeCycle(){
+      hiwTyped.textContent='';
+      hiwCursor.style.display='inline-block';
+      setTimeout(function(){
+        var i=0, iv=setInterval(function(){
+          i++; hiwTyped.textContent=TYPING_TEXT.slice(0,i);
+          if(i>=TYPING_TEXT.length){
+            clearInterval(iv);
+            setTimeout(function(){
+              hiwCursor.style.display='none';
+              hiwTyped.textContent='';
+              setTimeout(typeCycle,500);
+            },2800);
+          }
+        },52);
+      },1000);
+    })();
+  }
+
+  /* ── Plan Visual ─────────────────────────────────────────────── */
+  var pr0=document.getElementById('pr0'), pc0=document.getElementById('pc0');
+  var pr1=document.getElementById('pr1'), pc1=document.getElementById('pc1');
+  if(pr0){
+    (function planCycle(){
+      function show(){
+        setTimeout(function(){ pr0.classList.add('pv'); setTimeout(function(){ pc0.classList.add('cv'); },280); },0);
+        setTimeout(function(){ pr1.classList.add('pv'); setTimeout(function(){ pc1.classList.add('cv'); },280); },160);
+        setTimeout(hide,3600);
+      }
+      function hide(){
+        [pr0,pr1].forEach(function(r){ r.classList.remove('pv'); });
+        [pc0,pc1].forEach(function(c){ c.classList.remove('cv'); });
+        setTimeout(show,700);
+      }
+      setTimeout(show,400);
+    })();
+  }
+
+  /* ── Bar Chart ───────────────────────────────────────────────── */
+  var VALS=[30,38,46,60,50,95,0], DAYS=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  var barsEl=document.getElementById('gwchart-bars'), daysEl=document.getElementById('gwchart-days');
+  if(barsEl){
+    var barEls=VALS.map(function(v,i){
+      var col=document.createElement('div'); col.className='chart-col';
+      var bar=document.createElement('div'); bar.className='chart-bar';
+      bar.style.cssText='height:0%;background:'+(i>=5?'#e85d3a':'var(--border2)')+';transition:height 0.7s cubic-bezier(0.34,1.2,0.64,1) '+(i*55)+'ms;';
+      col.appendChild(bar); barsEl.appendChild(col); return bar;
+    });
+    DAYS.forEach(function(d,i){
+      var s=document.createElement('span'); s.className='chart-day';
+      s.textContent=d; s.style.color=i>=5?'#e85d3a':'var(--muted)'; daysEl.appendChild(s);
+    });
+    (function chartCycle(){
+      function show(){ barEls.forEach(function(b,i){ b.style.height=VALS[i]+'%'; }); setTimeout(hide,3000); }
+      function hide(){ barEls.forEach(function(b){ b.style.height='0%'; }); setTimeout(show,600); }
+      setTimeout(show,300);
+    })();
+  }
+
+  /* ── GEO Visual ──────────────────────────────────────────────── */
+  var geoPhases=[document.getElementById('geo0'),document.getElementById('geo1'),document.getElementById('geo2')];
+  var geoPips=[document.getElementById('gp0'),document.getElementById('gp1'),document.getElementById('gp2')];
+  var llmFills=[
+    {el:document.getElementById('llmf0'),w:'62%'},
+    {el:document.getElementById('llmf1'),w:'23%'},
+    {el:document.getElementById('llmf2'),w:'15%'},
+  ];
+  var GEO_DUR=[4200,3200,3200];
+  if(geoPhases[0]){
+    var geoIdx=0;
+    (function geoCycle(){
+      geoPhases.forEach(function(p,i){ p.classList.toggle('geo-on',i===geoIdx); });
+      geoPips.forEach(function(p,i){ p.classList.toggle('on',i===geoIdx); });
+      if(geoIdx===2){
+        setTimeout(function(){ llmFills.forEach(function(f){ f.el.style.width=f.w; }); },200);
+      } else {
+        llmFills.forEach(function(f){ f.el.style.width='0%'; });
+      }
+      setTimeout(function(){ geoIdx=(geoIdx+1)%3; geoCycle(); },GEO_DUR[geoIdx]);
+    })();
+  }
+
+  /* ── Subreddits Visual ───────────────────────────────────────── */
+  var subItems=[
+    {item:document.getElementById('si0'),match:document.getElementById('sm0')},
+    {item:document.getElementById('si1'),match:document.getElementById('sm1')},
+    {item:document.getElementById('si2'),match:document.getElementById('sm2')},
+    {item:document.getElementById('si3'),match:document.getElementById('sm3')},
+  ];
+  if(subItems[0].item){
+    (async function subCycle(){
+      while(true){
+        subItems.forEach(function(s){ s.item.classList.remove('sv'); s.match.classList.remove('mv'); });
+        await wait(400);
+        for(var i=0;i<subItems.length;i++){
+          await wait(350); subItems[i].item.classList.add('sv');
+          await wait(320); subItems[i].match.classList.add('mv');
+        }
+        await wait(2000);
+      }
+    })();
+  }
+
+  /* ── Posts Visual ────────────────────────────────────────────── */
+  var postTyped=document.getElementById('post-typed');
+  var postCursor=document.getElementById('post-cursor');
+  var postBtn=document.getElementById('post-btn');
+  var POST_TEXT='I use GroundWave — it handles expense tracking automatically and integrates with Stripe. Been using it 6 months.';
+  if(postTyped){
+    (async function postCycle(){
+      while(true){
+        postTyped.textContent=''; postCursor.style.display='inline-block'; postBtn.classList.remove('pbv');
+        await wait(600);
+        for(var i=1;i<=POST_TEXT.length;i++){ postTyped.textContent=POST_TEXT.slice(0,i); await wait(26); }
+        postCursor.style.display='none'; await wait(300); postBtn.classList.add('pbv'); await wait(2800);
+      }
+    })();
+  }
+
+  /* ── Command Visual ──────────────────────────────────────────── */
+  var cmdEvs=[
+    document.getElementById('ce0'),document.getElementById('ce1'),
+    document.getElementById('ce2'),document.getElementById('ce3'),
+  ];
+  var cmdBadge=document.getElementById('cmd-badge');
+  if(cmdEvs[0]){
+    (async function cmdCycle(){
+      while(true){
+        cmdEvs.forEach(function(e){ e.classList.remove('cev'); }); cmdBadge.classList.remove('cbv');
+        await wait(500);
+        for(var i=0;i<cmdEvs.length;i++){ await wait(680); cmdEvs[i].classList.add('cev'); }
+        await wait(600); cmdBadge.classList.add('cbv'); await wait(2600);
+      }
+    })();
+  }
+
+})();
+</script>
 
 <!-- 7. ABOUT / WHY TRUST US -->
 <section class="trust" id="about">

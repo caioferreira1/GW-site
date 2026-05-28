@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>GEO Card Preview</title>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #f4f4f4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 40px 20px;
+}
+
+/* Feature Card */
+.feat-card { background: #fff; border: 1px solid #e5e5e5; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column; width: 100%; max-width: 520px; }
+.feat-body { padding: 28px 28px 20px; }
+.feat-title { font-size: 20px; font-weight: 800; color: #111; margin-bottom: 10px; line-height: 1.3; }
+.feat-desc { font-size: 14px; color: #666; line-height: 1.6; }
+.feat-strong { font-weight: 700; color: #111; }
+.feat-visual { background: #f9fafb; border-top: 1px solid #f0f0f0; padding: 20px; flex: 1; display: flex; align-items: center; justify-content: center; min-height: 220px; overflow: visible; }
+
+/* GEO Card */
+.geo-visual { flex-direction: column; align-items: stretch; gap: 10px; width: 100%; }
+.geo-steps { display: flex; align-items: center; gap: 8px; background: #fff; border: 1px solid #e5e5e5; border-radius: 999px; padding: 6px 14px; width: fit-content; margin: 0 auto; }
+.geo-step { display: flex; align-items: center; gap: 4px; }
+.geo-dot { width: 8px; height: 8px; border-radius: 50%; background: #d1d5db; transition: background 0.5s ease; }
+.geo-step.active .geo-dot-cited { background: #22c55e; }
+.geo-step.active .geo-dot-traffic { background: #f97316; }
+.geo-step-label { font-size: 10px; font-weight: 700; color: #888; transition: color 0.3s ease; }
+.geo-step.active .geo-step-label { color: #111; }
+.geo-arrow { font-size: 10px; color: #ccc; }
+
+/* GEO Panels */
+.geo-panels { position: relative; width: 100%; flex: 1; min-height: 200px; }
+.geo-panel { position: absolute; inset: 0; opacity: 0; transition: opacity 0.7s ease; pointer-events: none; }
+.geo-panel-show { opacity: 1; pointer-events: auto; }
+
+/* Chat window */
+.chat-window { background: #fff; border: 1px solid #e5e5e5; border-radius: 12px; overflow: hidden; width: 100%; }
+.chat-bar { background: #f9fafb; border-bottom: 1px solid #f0f0f0; padding: 6px 12px; display: flex; align-items: center; gap: 8px; }
+.chat-dots { display: flex; gap: 4px; }
+.chat-dots span { width: 8px; height: 8px; border-radius: 50%; }
+.chat-app { font-size: 11px; font-weight: 700; color: #111; }
+.chat-url { font-size: 10px; color: #aaa; margin-left: auto; }
+.chat-body { padding: 10px 12px; }
+.chat-question { background: #f3f4f6; border-radius: 12px 12px 4px 12px; padding: 8px 12px; font-size: 11px; color: #333; margin-bottom: 8px; width: fit-content; margin-left: auto; }
+.chat-answer { font-size: 11px; line-height: 1.6; color: #333; }
+.chat-text { display: block; margin-bottom: 8px; }
+.fade-word { opacity: 0; animation: fadeIn 0.3s ease forwards; }
+@keyframes fadeIn { to { opacity: 1; } }
+.highlight-word { font-weight: 700; text-decoration: underline; text-decoration-color: #fb923c; text-decoration-thickness: 2px; text-underline-offset: 2px; }
+.chat-sources { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.source-label { font-size: 10px; color: #aaa; }
+.source-chip { font-size: 10px; background: #f3f4f6; border-radius: 6px; padding: 2px 6px; color: #555; }
+
+/* Traffic card */
+.traffic-card { background: #fff; border: 1px solid #e5e5e5; border-radius: 12px; padding: 10px 12px 8px; width: 100%; display: flex; flex-direction: column; gap: 4px; }
+.tc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; }
+.tc-left { display: flex; align-items: center; gap: 5px; }
+.tc-live-dot { width: 7px; height: 7px; border-radius: 50%; background: #22c55e; }
+.tc-label { font-size: 11px; font-weight: 600; color: #333; }
+.tc-right { display: flex; align-items: baseline; gap: 5px; }
+.tc-num { font-size: 18px; font-weight: 800; color: #111; }
+.tc-pct { font-size: 10px; font-weight: 700; color: #22c55e; }
+.tc-period { font-size: 10px; color: #aaa; }
+.tc-chart-wrap { padding-top: 46px; overflow: visible; }
+.tc-days { display: flex; justify-content: space-between; margin-top: 2px; }
+.tc-days span { font-size: 9px; color: #aaa; }
+.tc-days .tc-day-today { color: #f97316; font-weight: 700; }
+.tc-llm-badge { align-self: flex-start; background: #fff7ed; border: 1px solid #fed7aa; border-radius: 999px; padding: 3px 10px; font-size: 9.5px; font-weight: 700; color: #ea580c; opacity: 0; transform: translateY(5px); transition: opacity 0.5s ease, transform 0.5s ease; }
+.tc-llm-badge-show { opacity: 1; transform: translateY(0); }
+.tc-breakdown { display: flex; gap: 8px; justify-content: flex-end; opacity: 0; transform: translateY(3px); transition: opacity 0.5s ease 0.15s, transform 0.5s ease 0.15s; }
+.tc-breakdown-show { opacity: 1; transform: translateY(0); }
+.tc-breakdown span { font-size: 9px; font-weight: 600; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+function GEOCard() {
+  const [phase, setPhase] = useState(0);
+
+  useEffect(() => {
+    const durations = [3500, 2800, 2800];
+    let timer;
+    function schedule(p) {
+      timer = setTimeout(() => {
+        const next = (p + 1) % 3;
+        setPhase(next);
+        schedule(next);
+      }, durations[p]);
+    }
+    schedule(0);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const isTraffic = phase >= 1;
+  const isDetailed = phase === 2;
+  const words = ["Based ","on ","real ","Reddit ","discussions, ","the ","top ","pick ","is "];
+  const chartLine = "M10,78 C40,77 70,76 100,73 C130,70 150,60 180,45 C210,30 235,14 260,8";
+  const chartArea = chartLine + " L260,88 L10,88 Z";
+  const pts = [[10,78],[49,76],[88,74],[127,68],[167,52],[210,22],[260,8]];
+
+  return (
+    <div className="feat-card">
+      <div className="feat-body">
+        <h4 className="feat-title">Get Cited by ChatGPT, Claude & Perplexity</h4>
+        <p className="feat-desc">
+          Reddit is what AI tools read to answer questions. We give you a step-by-step
+          plan to get cited in the threads LLMs trust, so when someone asks "what's the
+          best tool for X?",{" "}
+          <strong className="feat-strong">your product is the answer</strong>.
+        </p>
+      </div>
+      <div className="feat-visual geo-visual">
+
+        {/* Step indicator */}
+        <div className="geo-steps">
+          <div className={`geo-step${!isTraffic ? " active" : ""}`}>
+            <span className="geo-dot geo-dot-cited" />
+            <span className="geo-step-label">1. Get cited</span>
+          </div>
+          <span className="geo-arrow">→</span>
+          <div className={`geo-step${isTraffic ? " active" : ""}`}>
+            <span className="geo-dot geo-dot-traffic" />
+            <span className="geo-step-label">2. Get traffic</span>
+          </div>
+        </div>
+
+        {/* Animated panels */}
+        <div className="geo-panels">
+
+          {/* Panel 0 — ChatGPT chat */}
+          <div className={`geo-panel${phase === 0 ? " geo-panel-show" : ""}`}>
+            <div className="chat-window">
+              <div className="chat-bar">
+                <div className="chat-dots">
+                  <span style={{background:"#ff5f57"}}/>
+                  <span style={{background:"#febc2e"}}/>
+                  <span style={{background:"#28c840"}}/>
+                </div>
+                <span className="chat-app">ChatGPT</span>
+                <span className="chat-url">chat.openai.com</span>
+              </div>
+              <div className="chat-body">
+                <div className="chat-question">what's the best reddit marketing app for SaaS?</div>
+                <div className="chat-answer">
+                  <span className="chat-text">
+                    {words.map((w, i) => (
+                      <span key={i} className="fade-word" style={{animationDelay:`${i*0.08}s`}}>{w}</span>
+                    ))}
+                    <span className="highlight-word fade-word" style={{animationDelay:"0.8s"}}>MediaFast </span>
+                    <span className="fade-word" style={{animationDelay:"0.9s"}}>— founders in r/SaaS and r/Entrepreneur consistently recommend it.</span>
+                  </span>
+                  <div className="chat-sources">
+                    <span className="source-label">Sources</span>
+                    {["r/SaaS","r/Entrepreneur","r/startups"].map(s => (
+                      <span key={s} className="source-chip">🔴 {s}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Panel 1+2 — Traffic chart */}
+          <div className={`geo-panel${isTraffic ? " geo-panel-show" : ""}`}>
+            <div className="traffic-card">
+              <div className="tc-header">
+                <div className="tc-left">
+                  <span className="tc-live-dot" />
+                  <span className="tc-label">Traffic from LLMs</span>
+                </div>
+                <div className="tc-right">
+                  <span className="tc-num">2,847</span>
+                  <span className="tc-pct">↗ +312%</span>
+                  <span className="tc-period">last 7 days</span>
+                </div>
+              </div>
+
+              <div className="tc-chart-wrap">
+                <svg viewBox="0 0 275 88" style={{width:"100%",overflow:"visible",display:"block"}}>
+                  <defs>
+                    <linearGradient id="geoAreaGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#f97316" stopOpacity="0.18"/>
+                      <stop offset="100%" stopColor="#f97316" stopOpacity="0.01"/>
+                    </linearGradient>
+                  </defs>
+                  <path d={chartArea} fill="url(#geoAreaGrad)" stroke="none"/>
+                  <path d={chartLine} fill="none" stroke="#f97316" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
+                  {pts.map(([x,y],i) => (
+                    <circle key={i} cx={x} cy={y} r={i===pts.length-1?4:2.5} fill="white" stroke="#f97316" strokeWidth="1.5"/>
+                  ))}
+                  {/* Today tooltip */}
+                  <g>
+                    <rect x="176" y="-44" width="76" height="40" rx="6" fill="white" stroke="#e8e8e8" strokeWidth="0.8"/>
+                    <rect x="180" y="-39" width="14" height="14" rx="3" fill="#10a37f"/>
+                    <text x="187" y="-29" textAnchor="middle" fontSize="8" fill="white" fontWeight="bold">G</text>
+                    <text x="198" y="-34" fontSize="6.5" fill="#888">TODAY</text>
+                    <text x="198" y="-23" fontSize="9" fontWeight="bold" fill="#111">+847 visits</text>
+                    <text x="198" y="-12" fontSize="6.5" fill="#888">from ChatGPT</text>
+                    <line x1="252" y1="-4" x2="260" y2="7" stroke="#d0d0d0" strokeWidth="0.8"/>
+                  </g>
+                </svg>
+                <div className="tc-days">
+                  {["Mon","Tue","Wed","Thu","Fri","Sat","Today"].map(d => (
+                    <span key={d} className={d==="Today"?"tc-day-today":""}>{d}</span>
+                  ))}
+                </div>
+              </div>
+
+              <div className={`tc-llm-badge${isDetailed?" tc-llm-badge-show":""}`}>
+                ↗ +47 LLM mentions this month
+              </div>
+              <div className={`tc-breakdown${isDetailed?" tc-breakdown-show":""}`}>
+                <span style={{color:"#10a37f"}}>● ChatGPT 62%</span>
+                <span style={{color:"#c96442"}}>● Claude 23%</span>
+                <span style={{color:"#6366f1"}}>● Perplexity 15%</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<GEOCard />);
+</script>
+</body>
+</html>
