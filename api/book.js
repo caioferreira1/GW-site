@@ -1,5 +1,5 @@
 const EVENT_TYPE_ID = 5751687;
-const TIMEZONE = 'America/Sao_Paulo';
+const TIMEZONE = 'America/New_York';
 
 function parseStartISO(dateISO, timeStr) {
   const [timePart, ampm] = timeStr.trim().split(' ');
@@ -74,7 +74,7 @@ module.exports = async function handler(req, res) {
         email,
         ...(notes ? { notes } : {}),
       },
-      timeZone: TIMEZONE,
+      timeZone: 'America/New_York',
       language: 'en',
       metadata: {},
     }),

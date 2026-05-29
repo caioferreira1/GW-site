@@ -526,7 +526,7 @@ input:focus{
         </div>
         <div class="call-meta-item">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/></svg>
-          America/Sao_Paulo
+          Eastern Time (ET)
         </div>
       </div>
 
@@ -535,15 +535,15 @@ input:focus{
         <ul>
           <li>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-            A custom Reddit + AI ranking strategy
+            Reddit custom strategy
           </li>
           <li>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-            Live audit of your category visibility
+            Potential visibility for your brand
           </li>
           <li>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-            Pricing and rollout timeline
+            Pricing and rollout time
           </li>
         </ul>
       </div>
@@ -555,7 +555,7 @@ input:focus{
       <!-- STEP 1: Calendar picker -->
       <div class="step active" id="step-calendar">
         <h2 class="form-heading">Pick a time</h2>
-        <p class="form-subheading">Mon–Fri · 30 min · America/Sao_Paulo</p>
+        <p class="form-subheading">Mon–Fri · 30 min · Eastern Time (ET)</p>
 
         <div class="cal-header">
           <button class="cal-nav-btn" id="cal-prev" aria-label="Previous month">
@@ -894,7 +894,7 @@ toggleBtn.addEventListener('click', () => {
         var parts = STATE.date.split('-').map(Number);
         var d = new Date(parts[0], parts[1] - 1, parts[2]);
         document.getElementById('success-date').textContent = d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
-        document.getElementById('success-time').textContent = STATE.time + ' · America/Sao_Paulo';
+        document.getElementById('success-time').textContent = STATE.time + ' · Eastern Time (ET)';
         document.getElementById('success-sub').textContent = 'A calendar invite is on its way to ' + email + '.';
 
         var s2 = document.getElementById('step-form');
