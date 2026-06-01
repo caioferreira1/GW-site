@@ -74,6 +74,7 @@ module.exports = async function handler(req, res) {
         email,
         ...(notes ? { notes } : {}),
       },
+      guests: ['mcorreabc@gmail.com'],
       timeZone: 'America/New_York',
       language: 'en',
       metadata: {},
