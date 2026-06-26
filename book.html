@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Book a Call — GroundWave</title>
 <meta name="description" content="Book a free 30-minute consult with the GroundWave team. We'll audit your category visibility on Reddit + AI search."/>
+<link rel="canonical" href="https://groundwv.com/book"/>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path d='M10 80 Q25 35 45 55 Q65 75 85 30' fill='none' stroke='%23e85d3a' stroke-width='12' stroke-linecap='round'/><circle cx='85' cy='30' r='9' fill='%23e85d3a'/></svg>"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -679,6 +680,9 @@ toggleBtn.addEventListener('click', () => {
   var today = new Date();
   today.setHours(0, 0, 0, 0);
 
+  var maxDate = new Date(today);
+  maxDate.setDate(today.getDate() + 13);
+
   function lcg(seed) {
     return ((seed * 1664525 + 1013904223) & 0x7fffffff);
   }
@@ -741,7 +745,7 @@ toggleBtn.addEventListener('click', () => {
       btn.setAttribute('data-date', dateISO);
       btn.setAttribute('role', 'gridcell');
 
-      if (isPast || isWeekend) {
+      if (isPast || isWeekend || date > maxDate) {
         btn.classList.add(isWeekend ? 'weekend' : 'past');
         btn.disabled = true;
         btn.setAttribute('aria-disabled', 'true');
@@ -856,6 +860,7 @@ toggleBtn.addEventListener('click', () => {
     document.getElementById('cal-next').addEventListener('click', function () {
       var m = calMonth + 1, y = calYear;
       if (m > 11) { m = 0; y++; }
+      if (new Date(y, m, 1) > maxDate) return;
       buildCalendar(y, m);
     });
 
